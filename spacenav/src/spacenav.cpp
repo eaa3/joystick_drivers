@@ -148,6 +148,15 @@ Spacenav::Spacenav(const rclcpp::NodeOptions & options)
     static_trans_deadband);
   RCLCPP_DEBUG(
     get_logger(), "static_rot_deadband: %.3f", static_rot_deadband);
+
+
+  unsigned long bpix;
+  if(!(this->dpy = XOpenDisplay(0))) {
+		fprintf(stderr, "failed to connect to the X server\n");
+    throw "Failed to connect to the X server";
+	}
+  bpix = BlackPixel(this->dpy, DefaultScreen(this->dpy));
+  this->win = XCreateSimpleWindow(this->dpy, DefaultRootWindow(this->dpy), 0, 0, 1, 1, 0, bpix, bpix);
 }
 
 Spacenav::~Spacenav()
@@ -159,8 +168,21 @@ Spacenav::~Spacenav()
 
 void Spacenav::poll_spacenav()
 {
+
+  
+
+  
+	/* This actually registers our window with the driver for receiving
+	 * motion/button events through the 3dxsrv-compatible X11 protocol.
+	 */
+
   if (!spacenav_is_open) {
-    if (spnav_open() == -1) {
+
+
+    
+    // if (spnav_open() == -1) {
+
+      if (spnav_x11_open(this->dpy, this->win) == -1){
       RCLCPP_ERROR(
         get_logger(),
         "Could not open the space navigator device. "
