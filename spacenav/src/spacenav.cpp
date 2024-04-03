@@ -167,27 +167,19 @@ Spacenav::~Spacenav()
 }
 
 void Spacenav::poll_spacenav()
-{
-
-  
-
-  
+{ 
 	/* This actually registers our window with the driver for receiving
 	 * motion/button events through the 3dxsrv-compatible X11 protocol.
 	 */
 
   if (!spacenav_is_open) {
 
-
-    
-    // if (spnav_open() == -1) {
-
       if (spnav_x11_open(this->dpy, this->win) == -1){
-      RCLCPP_ERROR(
-        get_logger(),
-        "Could not open the space navigator device. "
-        "Did you remember to run spacenavd (as root)?");
-      return;
+        RCLCPP_ERROR(
+          get_logger(),
+          "Could not open the space navigator device. "
+          "Did you remember to run spacenavd (as root)?");
+        return;
     } else {
       spacenav_is_open = true;
     }
@@ -227,6 +219,26 @@ void Spacenav::poll_spacenav()
   this->get_parameter<double>(
     SPACENAV_STATIC_ROT_DEADBAND_PARAM_S,
     static_rot_deadband);
+
+  RCLCPP_DEBUG(
+    get_logger(), "full scale: %.1f", full_scale);
+  RCLCPP_DEBUG(
+    get_logger(), "linear_scale: %.3f %.3f %.3f", linear_scale[0],
+    linear_scale[1], linear_scale[2]);
+  RCLCPP_DEBUG(
+    get_logger(), "angular_scale: %.3f %.3f %.3f", angular_scale[0],
+    angular_scale[1], angular_scale[2]);
+  RCLCPP_DEBUG(
+    get_logger(), "static_count_threshold: %df",
+    static_count_threshold);
+  RCLCPP_DEBUG(
+    get_logger(), "zero_when_static : %d", zero_when_static);
+  RCLCPP_DEBUG(
+    get_logger(), "static_trans_deadband: %.3f",
+    static_trans_deadband);
+  RCLCPP_DEBUG(
+    get_logger(), "static_rot_deadband: %.3f", static_rot_deadband);
+
 
   bool queue_empty = false;
   while (!queue_empty) {

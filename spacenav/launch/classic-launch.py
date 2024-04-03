@@ -25,14 +25,24 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import launch
 from launch import LaunchDescription
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    logger = launch.substitutions.LaunchConfiguration("log_level")
     return LaunchDescription([
+            launch.actions.DeclareLaunchArgument(
+                "log_level",
+                default_value=["info"],
+                description="Logging level",
+        ),
         Node(package='spacenav', executable='spacenav_node',
              name='spacenav', namespace='', output='screen',
              parameters=[{'zero_when_static': True,
-                          'static_count_threshold': 30}]),
+                          'static_count_threshold': 30,
+                          'linear_scale': 5.0,
+                          'angular_scale': 5.0}],
+             arguments=['--ros-args', '--log-level', logger]),
     ])
